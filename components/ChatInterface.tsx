@@ -54,7 +54,8 @@ export default function ChatInterface() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get response');
+        const errorData = await response.json();
+        throw new Error(errorData.error || errorData.details || 'Failed to get response');
       }
 
       const data = await response.json();
@@ -68,9 +69,23 @@ export default function ChatInterface() {
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Chat error:', error);
+      const errorText = error instanceof Error ? error.message : 'Unknown error';
+      
+      let userFriendlyMessage = "Sorry, I'm having trouble connecting right now. 🙏\n\n";
+      
+      if (errorText.includes('API key')) {
+        userFriendlyMessage += '⚠️ **API Key Issue**\nPlease check your Gemini API key in .env.local\nGet one at: https://makersuite.google.com/app/apikey';
+      } else if (errorText.includes('quota') || errorText.includes('limit')) {
+        userFriendlyMessage += '⚠️ **Quota Exceeded**\nPlease wait a minute and try again.';
+      } else if (errorText.includes('GOOGLE_GEMINI_API_KEY')) {
+        userFriendlyMessage += '⚠️ **Missing API Key**\nAdd GOOGLE_GEMINI_API_KEY to your .env.local file';
+      } else {
+        userFriendlyMessage += `Error: ${errorText}\n\nTest your setup at: /api/test-gemini`;
+      }
+      
       const errorMessage: Message = {
         role: 'assistant',
-        content: "Sorry, I'm having trouble connecting right now. Please try again in a moment! 🙏",
+        content: userFriendlyMessage,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);

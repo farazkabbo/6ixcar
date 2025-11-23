@@ -29,11 +29,24 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Chat API error:', error);
     
+    // Check specific error types
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    let userMessage = 'Failed to generate response. Please try again.';
+    
+    if (errorMessage.includes('API key')) {
+      userMessage = '⚠️ Gemini API key issue. Please check your .env.local file.';
+    } else if (errorMessage.includes('quota') || errorMessage.includes('limit')) {
+      userMessage = '⚠️ API quota exceeded. Please wait a minute and try again.';
+    } else if (errorMessage.includes('GOOGLE_GEMINI_API_KEY')) {
+      userMessage = '⚠️ GOOGLE_GEMINI_API_KEY not found. Add it to .env.local';
+    }
+    
     // Return user-friendly error
     return NextResponse.json(
       { 
-        error: 'Failed to generate response. Please try again.',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: userMessage,
+        details: errorMessage,
+        help: 'Visit /api/test-gemini to diagnose the issue'
       },
       { status: 500 }
     );
