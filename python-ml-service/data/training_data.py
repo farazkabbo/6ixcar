@@ -3,6 +3,9 @@ Synthetic Canadian Car Training Data Generator
 Generates realistic car listings for ML model training
 """
 
+import warnings
+warnings.filterwarnings('ignore', category=UserWarning)
+
 import pandas as pd
 import numpy as np
 

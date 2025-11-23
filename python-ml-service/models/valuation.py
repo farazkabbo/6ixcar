@@ -3,6 +3,9 @@ Car Valuation ML Model
 Predicts fair market price and calculates deal scores
 """
 
+import warnings
+warnings.filterwarnings('ignore', category=UserWarning)
+
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor

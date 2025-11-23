@@ -3,6 +3,9 @@ Car Depreciation Prediction Model
 Predicts 5-year value retention and depreciation curve
 """
 
+import warnings
+warnings.filterwarnings('ignore', category=UserWarning)
+
 import numpy as np
 from typing import Dict, Any, List
 
