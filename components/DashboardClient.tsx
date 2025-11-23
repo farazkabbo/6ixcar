@@ -6,7 +6,9 @@ import { UserButton, useUser } from '@clerk/nextjs';
 import { Bot, Calculator, Menu, X, Sparkles } from 'lucide-react';
 import ChatInterface from './ChatInterface';
 import BudgetSimulator from './BudgetSimulator';
-import MLDemoWidget from './MLDemoWidget';
+import { CarCatalog, usePersistedSelection } from './CarCatalog';
+import { CarPredictions } from './CarPredictions';
+import { MLServiceBadge, MLPipelineVisualizer } from './MLIndicators';
 
 type Tab = 'chat' | 'budget' | 'ml';
 
@@ -14,6 +16,15 @@ export default function DashboardClient() {
   const [activeTab, setActiveTab] = useState<Tab>('chat');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user } = useUser();
+  const { selected, update } = usePersistedSelection();
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  // Track when predictions are being fetched
+  useEffect(() => {
+    setIsProcessing(selected.length > 0);
+    const timer = setTimeout(() => setIsProcessing(false), 3000);
+    return () => clearTimeout(timer);
+  }, [selected]);
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -163,7 +174,24 @@ export default function DashboardClient() {
             </div>
           ) : (
             <div className="p-6 max-h-[calc(100vh-16rem)] overflow-y-auto">
-              <MLDemoWidget />
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-6"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 className="text-2xl font-bold text-white mb-1">🚗 Live AI Predictions</h2>
+                    <p className="text-sm text-slate-400">Select cars to generate real-time valuation & depreciation analysis</p>
+                  </div>
+                  <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                    🤖 ML POWERED
+                  </div>
+                </div>
+                
+                <CarCatalog selected={selected} onChange={update} />
+                <CarPredictions selected={selected} />
+              </motion.div>
             </div>
           )}
         </motion.div>
