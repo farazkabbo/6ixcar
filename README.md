@@ -40,10 +40,17 @@
 
 ## 🏗️ Tech Stack
 
+### Frontend & Backend
 - **Frontend**: Next.js 16, React 19, TypeScript, TailwindCSS, Framer Motion
 - **Backend**: Next.js API Routes, Google Gemini AI
 - **Auth**: Clerk
 - **Deployment**: Vercel
+
+### ML Service (Optional)
+- **Framework**: FastAPI, Python 3.11
+- **ML Models**: scikit-learn (Random Forest)
+- **Features**: Car valuation, depreciation prediction
+- **Deployment**: Railway/Render
 
 ## 🚀 Getting Started
 
@@ -84,6 +91,9 @@ GOOGLE_GEMINI_API_KEY=your_gemini_api_key_here
 
 # App Configuration
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# ML Service (Optional - for AI valuation)
+ML_SERVICE_URL=http://localhost:8000
 ```
 
 ### 🔑 Getting API Keys
@@ -109,6 +119,8 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 ### Running the Application
 
+#### Option 1: Basic (Without ML)
+
 1. **Development mode**
 ```powershell
 npm run dev
@@ -119,12 +131,30 @@ npm run dev
 http://localhost:3000
 ```
 
-3. **Build for production**
+#### Option 2: Full (With ML Service)
+
+**Terminal 1: Start ML Service**
+```powershell
+cd python-ml-service
+pip install -r requirements.txt
+python run.py
+```
+
+**Terminal 2: Start Next.js App**
+```powershell
+npm run dev
+```
+
+The ML service adds:
+- 🏷️ AI car valuation (fair market price)
+- 📊 Deal scoring (0-100)
+- 📉 5-year depreciation forecasting
+- 💰 Resale value predictions
+
+**Build for production**
 ```powershell
 npm run build
 npm start
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More
 

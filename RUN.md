@@ -1,6 +1,6 @@
 # 🏃 How to Run 6ixKar
 
-## Quick Start (3 Commands)
+## Quick Start (Basic - Without ML)
 
 ```powershell
 # 1. Install dependencies
@@ -14,6 +14,28 @@ npm run dev
 ```
 
 Then open **http://localhost:3000** in your browser! 🎉
+
+---
+
+## Full Start (With ML Features)
+
+### Terminal 1: Python ML Service
+```powershell
+cd python-ml-service
+pip install -r requirements.txt
+python run.py
+```
+ML service runs on **http://localhost:8000**
+
+### Terminal 2: Next.js App
+```powershell
+# In main directory
+npm install
+npm run dev
+```
+Web app runs on **http://localhost:3000**
+
+Make sure to add `ML_SERVICE_URL=http://localhost:8000` to `.env.local`!
 
 ---
 

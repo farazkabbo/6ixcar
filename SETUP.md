@@ -96,19 +96,75 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 **Important**: Replace the placeholder keys with your actual keys from Steps 2 and 3!
 
-## Step 5: Run the Application
+## Step 5: Setup Python ML Service (Optional but Recommended)
 
-### 5.1 Start Development Server
+The ML service powers AI car valuation and depreciation predictions.
+
+### 5.1 Check Python Installation
+```powershell
+python --version
+```
+You need Python 3.8 or higher.
+
+### 5.2 Navigate to ML Service Directory
+```powershell
+cd python-ml-service
+```
+
+### 5.3 Install Python Dependencies
+```powershell
+pip install -r requirements.txt
+```
+
+This installs:
+- FastAPI (web framework)
+- scikit-learn (ML models)
+- pandas & numpy (data processing)
+- uvicorn (server)
+
+### 5.4 Start ML Service
+```powershell
+# Option 1: Using the run script
+python run.py
+
+# Option 2: Direct uvicorn
+python -m uvicorn main:app --reload --port 8000
+```
+
+The ML service will start at **http://localhost:8000**
+
+### 5.5 Verify ML Service
+Open browser to: **http://localhost:8000/docs**
+You should see the FastAPI interactive documentation! 🎉
+
+### 5.6 Return to Main Directory
+```powershell
+cd ..
+```
+
+## Step 6: Add ML Service URL to Environment
+
+### 6.1 Open `.env.local`
+Add this line:
+
+```env
+# ML Service URL (optional - for AI valuations)
+ML_SERVICE_URL=http://localhost:8000
+```
+
+## Step 7: Run the Application
+
+### 7.1 Start Development Server
 ```powershell
 npm run dev
 ```
 
-### 5.2 Open in Browser
+### 7.2 Open in Browser
 Navigate to: **http://localhost:3000**
 
 You should see the beautiful 6ixKar landing page! 🎉
 
-## Step 6: Test the Application
+## Step 8: Test the Application
 
 ### 6.1 Sign Up
 1. Click "Get Started" or "Sign Up"
