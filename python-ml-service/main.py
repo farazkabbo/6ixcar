@@ -23,7 +23,10 @@ app = FastAPI(
 # CORS middleware (allow Next.js to call this)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify your Next.js domain
+    allow_origins=[
+        "https://6ixcar.vercel.app",  # Production domain
+        "http://localhost:3000",      # Local development
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
