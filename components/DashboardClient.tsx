@@ -3,11 +3,12 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { UserButton, useUser } from '@clerk/nextjs';
-import { Bot, Calculator, Menu, X } from 'lucide-react';
+import { Bot, Calculator, Menu, X, Sparkles } from 'lucide-react';
 import ChatInterface from './ChatInterface';
 import BudgetSimulator from './BudgetSimulator';
+import MLDemoWidget from './MLDemoWidget';
 
-type Tab = 'chat' | 'budget';
+type Tab = 'chat' | 'budget' | 'ml';
 
 export default function DashboardClient() {
   const [activeTab, setActiveTab] = useState<Tab>('chat');
@@ -128,6 +129,18 @@ export default function DashboardClient() {
               <span className="hidden sm:inline">Budget Simulator</span>
               <span className="sm:hidden">Budget</span>
             </button>
+            <button
+              onClick={() => setActiveTab('ml')}
+              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
+                activeTab === 'ml'
+                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
+              }`}
+            >
+              <Sparkles className="w-5 h-5" />
+              <span className="hidden sm:inline">AI Predictions</span>
+              <span className="sm:hidden">AI</span>
+            </button>
           </div>
         </motion.div>
 
@@ -144,9 +157,13 @@ export default function DashboardClient() {
             <div className="h-[calc(100vh-16rem)]">
               <ChatInterface />
             </div>
-          ) : (
+          ) : activeTab === 'budget' ? (
             <div className="p-6 max-h-[calc(100vh-16rem)] overflow-y-auto">
               <BudgetSimulator />
+            </div>
+          ) : (
+            <div className="p-6 max-h-[calc(100vh-16rem)] overflow-y-auto">
+              <MLDemoWidget />
             </div>
           )}
         </motion.div>
