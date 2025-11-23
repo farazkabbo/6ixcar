@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Adjust based on make (luxury vs economy)
+   
     const luxuryBrands = ['BMW', 'Mercedes', 'Audi', 'Lexus', 'Tesla', 'Porsche'];
     const economyBrands = ['Honda', 'Toyota', 'Mazda', 'Hyundai', 'Kia'];
     
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       basePrice *= 0.85;
     }
 
-    // Add some randomness for realism
+  
     const variance = 0.1; // ±10%
     const randomFactor = 1 + (Math.random() * variance * 2 - variance);
     basePrice *= randomFactor;
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     // Generate mock listings count
     const listings = Math.floor(Math.random() * 50) + 20;
 
-    // Generate provincial prices (some provinces typically have higher/lower prices)
+ 
     const provinces: { [key: string]: number } = {};
     PROVINCES.forEach((province) => {
       let provinceFactor = 1.0;
