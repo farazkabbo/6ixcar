@@ -1,12 +1,15 @@
 'use client';
 
 import { useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { useAuth } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowRight, MapPin, Snowflake, DollarSign, Bot, CheckCircle, Sparkles } from 'lucide-react';
 import { FEATURES, STATISTICS, HOW_IT_WORKS } from '@/lib/constants';
+
+const Landing3D = dynamic(() => import('@/components/Landing3D'), { ssr: false });
 
 const iconMap: Record<string, any> = {
   MapPin,
@@ -34,12 +37,14 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 overflow-x-hidden">
-      {/* Animated Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-red-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+    <div className="min-h-screen bg-slate-950 overflow-x-hidden relative">
+      {/* 3D Background */}
+      <div className="fixed inset-0 z-0">
+        <Landing3D />
       </div>
+      
+      {/* Overlay Gradient to ensure text readability */}
+      <div className="fixed inset-0 z-0 bg-gradient-to-b from-slate-950/80 via-slate-950/50 to-slate-950 pointer-events-none"></div>
 
       {/* Navigation */}
       <nav className="relative z-50 bg-slate-900/50 backdrop-blur-sm border-b border-slate-800">

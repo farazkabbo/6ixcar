@@ -4,7 +4,7 @@ const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000';
 
 export async function GET(req: NextRequest) {
   try {
-    // Check if Python ML service is running
+    
     const response = await fetch(`${ML_SERVICE_URL}/health`, {
       method: 'GET',
       signal: AbortSignal.timeout(2000), // 2 second timeout
