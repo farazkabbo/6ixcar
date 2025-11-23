@@ -270,6 +270,7 @@ export function CarPredictions({ selected }: CarPredictionsProps) {
                     
                     <p className="text-xs text-slate-300 bg-slate-700/30 rounded p-2 italic">{r.depreciation.advice}</p>
                   </div>
+                  </div>
                 </motion.div>
               )}
             </motion.div>

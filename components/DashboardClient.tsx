@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { UserButton, useUser } from '@clerk/nextjs';
 import { Bot, Calculator, Menu, X, Sparkles } from 'lucide-react';
@@ -179,15 +179,27 @@ export default function DashboardClient() {
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-6"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div>
+                {/* Header with ML Service Status */}
+                <div className="flex items-start justify-between gap-4 mb-4">
+                  <div className="flex-1">
                     <h2 className="text-2xl font-bold text-white mb-1">🚗 Live AI Predictions</h2>
                     <p className="text-sm text-slate-400">Select cars to generate real-time valuation & depreciation analysis</p>
                   </div>
-                  <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
-                    🤖 ML POWERED
+                  <div className="space-y-2">
+                    <MLServiceBadge />
                   </div>
                 </div>
+
+                {/* Pipeline Visualizer - Shows ML is active */}
+                {selected.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                  >
+                    <MLPipelineVisualizer isProcessing={isProcessing} />
+                  </motion.div>
+                )}
                 
                 <CarCatalog selected={selected} onChange={update} />
                 <CarPredictions selected={selected} />
