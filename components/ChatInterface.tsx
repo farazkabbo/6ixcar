@@ -5,6 +5,23 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Bot, User, Loader2 } from 'lucide-react';
 import { Message } from '@/types';
 
+function stripMarkdown(raw: string): string {
+  return raw
+    // Bold/italic markers
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/__(.*?)__/g, '$1')
+    .replace(/\*(.*?)\*/g, '$1')
+    // Bullet markers at line start
+    .replace(/^[\t ]*[-*+]\s+/gm, '')
+    // Numbered list spacing (keep numbers, remove extra asterisks accidentally preceding)
+    .replace(/^(\d+)\.\s+\*+/gm, '$1. ')
+    // Remove stray asterisks before colons
+    .replace(/\s?\*:(\s)/g, ':$1')
+    // Collapse multiple blank lines
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -62,7 +79,7 @@ export default function ChatInterface() {
 
       const assistantMessage: Message = {
         role: 'assistant',
-        content: data.response,
+        content: stripMarkdown(data.response || ''),
         timestamp: new Date(),
       };
 
@@ -77,8 +94,8 @@ export default function ChatInterface() {
         userFriendlyMessage += '⚠️ **API Key Issue**\nPlease check your Gemini API key in .env.local\nGet one at: https://makersuite.google.com/app/apikey';
       } else if (errorText.includes('quota') || errorText.includes('limit')) {
         userFriendlyMessage += '⚠️ **Quota Exceeded**\nPlease wait a minute and try again.';
-      } else if (errorText.includes('GOOGLE_GEMINI_API_KEY')) {
-        userFriendlyMessage += '⚠️ **Missing API Key**\nAdd GOOGLE_GEMINI_API_KEY to your .env.local file';
+      } else if (errorText.includes('GEMINI_API_KEY')) {
+        userFriendlyMessage += '⚠️ **Missing API Key**\nAdd GEMINI_API_KEY to your .env.local file';
       } else {
         userFriendlyMessage += `Error: ${errorText}\n\nTest your setup at: /api/test-gemini`;
       }

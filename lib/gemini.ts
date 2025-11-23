@@ -1,24 +1,27 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { GEMINI_SYSTEM_INSTRUCTION } from './constants';
 
-// Initialize Gemini AI
-const apiKey = process.env.GOOGLE_GEMINI_API_KEY;
+
+export const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_GEMINI_API_KEY;
 
 if (!apiKey) {
-  throw new Error('GOOGLE_GEMINI_API_KEY is not set in environment variables');
+ 
+  throw new Error('API key not found. Set GEMINI_API_KEY in your .env.local file');
 }
 
 const genAI = new GoogleGenerativeAI(apiKey);
 
-// Get Gemini Pro model
+// Get Gemini model (modern default)
 export const getGeminiModel = () => {
   return genAI.getGenerativeModel({
-    model: 'gemini-pro',
+    model: 'gemini-2.5-flash',
+    systemInstruction: GEMINI_SYSTEM_INSTRUCTION,
     generationConfig: {
       temperature: 0.7,
       topK: 40,
       topP: 0.95,
       maxOutputTokens: 1024,
+      responseMimeType: 'text/plain',
     },
   });
 };
@@ -31,8 +34,16 @@ export async function generateChatResponse(
   try {
     const model = getGeminiModel();
 
-    // Format conversation history
-    const formattedHistory = history.map((msg) => ({
+    // Filter out assistant messages at the start and format conversation history
+    // Gemini requires first message to be from 'user'
+    let filteredHistory = history.filter((msg) => msg.role !== 'system');
+    
+    // Remove leading assistant messages
+    while (filteredHistory.length > 0 && filteredHistory[0].role === 'assistant') {
+      filteredHistory = filteredHistory.slice(1);
+    }
+
+    const formattedHistory = filteredHistory.map((msg) => ({
       role: msg.role === 'user' ? 'user' : 'model',
       parts: [{ text: msg.content }],
     }));
@@ -45,24 +56,32 @@ export async function generateChatResponse(
         topK: 40,
         topP: 0.95,
         maxOutputTokens: 1024,
+        responseMimeType: 'text/plain',
       },
     });
 
-    // Add system instruction as first message if history is empty
-    let prompt = message;
-    if (history.length === 0) {
-      prompt = `${GEMINI_SYSTEM_INSTRUCTION}\n\nUser: ${message}`;
+    const result = await chat.sendMessage(message);
+    const response = result.response as any;
+
+    // Safety diagnostics
+    const promptFeedback = response?.promptFeedback;
+    const blockReason = promptFeedback?.blockReason;
+    if (blockReason && blockReason !== 'BLOCK_REASON_UNSPECIFIED') {
+      throw new Error(`Response blocked by safety: ${blockReason}`);
     }
 
-    // Send message and get response
-    const result = await chat.sendMessage(prompt);
-    const response = result.response;
-    const text = response.text();
+    const text = response.text?.() ?? '';
+    if (!text) {
+      const finishReason = response?.candidates?.[0]?.finishReason;
+      throw new Error(`Empty response from model. finishReason=${finishReason ?? 'unknown'}`);
+    }
 
     return text;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error generating chat response:', error);
-    throw new Error('Failed to generate response from AI');
+    // Propagate SDK error messages to API route for clearer client errors
+    const msg = error?.message || error?.toString?.() || 'Unknown error';
+    throw new Error(msg);
   }
 }
 

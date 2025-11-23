@@ -37,8 +37,8 @@ export async function POST(request: NextRequest) {
       userMessage = '⚠️ Gemini API key issue. Please check your .env.local file.';
     } else if (errorMessage.includes('quota') || errorMessage.includes('limit')) {
       userMessage = '⚠️ API quota exceeded. Please wait a minute and try again.';
-    } else if (errorMessage.includes('GOOGLE_GEMINI_API_KEY')) {
-      userMessage = '⚠️ GOOGLE_GEMINI_API_KEY not found. Add it to .env.local';
+    } else if (errorMessage.includes('GEMINI_API_KEY')) {
+      userMessage = '⚠️ GEMINI_API_KEY not found. Add it to .env.local';
     }
     
     // Return user-friendly error

@@ -3,19 +3,20 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function GET() {
   try {
-    const apiKey = process.env.GOOGLE_GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
     
     if (!apiKey) {
       return NextResponse.json({
         status: 'error',
-        message: 'GOOGLE_GEMINI_API_KEY not found in environment variables',
+        message: 'GEMINI_API_KEY not found in environment variables',
         solution: 'Add your Gemini API key to .env.local'
       }, { status: 500 });
     }
 
     // Test the API key
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    const modelName = 'gemini-2.5-flash';
+    const model = genAI.getGenerativeModel({ model: modelName });
     
     const result = await model.generateContent('Say "Hello, 6ixKar is working!" in 5 words.');
     const response = result.response;
@@ -23,10 +24,11 @@ export async function GET() {
 
     return NextResponse.json({
       status: 'success',
-      message: 'Gemini API is working!',
+      message: 'Gemini API is working! ✅',
       testResponse: text,
       apiKeyPresent: true,
-      apiKeyPrefix: apiKey.substring(0, 10) + '...'
+      apiKeyPrefix: apiKey.substring(0, 10) + '...',
+      model: modelName
     });
     
   } catch (error: any) {
@@ -40,7 +42,8 @@ export async function GET() {
         '1. Invalid API key - Get a new one from https://makersuite.google.com/app/apikey',
         '2. API key quota exceeded - Check your usage limits',
         '3. API key not activated - Wait a few minutes after creation',
-        '4. Network issue - Check your internet connection'
+        '4. Network issue - Check your internet connection',
+        '5. Model name not available in current SDK/region - try gemini-1.5-pro or update the SDK'
       ]
     }, { status: 500 });
   }
